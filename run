@@ -1,0 +1,39 @@
+#/bin/env bash
+
+set -e
+
+
+DOCKER_TAG="rpi-lights"
+
+
+command="$1"; shift
+case $command in
+    broker)
+        echo "Running mosquitto mqtt broker"
+        if [ ! -d .data ]; then
+            mkdir .data
+        fi
+
+        docker run -d --rm \
+            --name panel-mqtt \
+            -p 1883:1883 \
+            -v $(pwd)/docker/config/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf \
+            -v $(pwd)/.data/mosquitto:/mosquitto/data \
+            eclipse-mosquitto
+        ;;
+    build)
+        echo "Building image"
+        docker build -t $DOCKER_TAG -f docker/Dockerfile .
+        ;;
+    script)
+        echo "Running script /app/scripts$1"
+        docker run -it --rm --network host $DOCKER_TAG python -i /app/scripts/$1
+        ;;
+    shell)
+        echo "Starting shell"
+        docker run -it --rm --network host $DOCKER_TAG bash
+        ;;
+    *)
+        echo "No known command $command"
+        ;;
+esac
