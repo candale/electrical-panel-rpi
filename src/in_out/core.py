@@ -1,12 +1,8 @@
 import time
 
 
-from relay import SM16relind
-from inputs import readCh
-
-
-first_relay_stack = SM16relind(0)
-second_relay_stack = SM16relind(2)
+from .relay import SM16relind
+from .inputs import readCh
 
 
 def get_stack_and_relay(number):
@@ -15,9 +11,16 @@ def get_stack_and_relay(number):
     relay = (number if number < 16 else number - 16) + 1
     return relay_stack, relay
 
-def set_relay(number, state):
+def write_relay(number, state):
     relay_stack, relay = get_stack_and_relay(number)
     relay_stack.set(relay, state)
+
+    return relay_stack.get(relay) == 1
+
+
+def read_relay(number):
+    relay_stack, relay = get_stack_and_relay(number)
+    return relay_stack.get(relay) == 1
 
 
 def rock_relay(number):
@@ -27,16 +30,20 @@ def rock_relay(number):
     time.sleep(0.3)
     relay_stack.set(relay, value)
 
+    return relay_stack.get(relay) == 1
+
 
 def toggle_relay(number):
     relay_stack, relay = get_stack_and_relay(number)
     value = relay_stack.get(relay)
     relay_stack.set(relay, not value)
 
+    return relay_stack.get(relay) == 1
+
 
 def clear_relays():
     for i in range(32):
-        set_relay(i, False)
+        write_relay(i, False)
 
 
 def get_stack_and_input(number):
@@ -47,5 +54,4 @@ def get_stack_and_input(number):
 
 def read_input(number):
     stack, input_ch = get_stack_and_input(number)
-    return readCh(stack, input_ch)
-
+    return readCh(stack, input_ch) == 1

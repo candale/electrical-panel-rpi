@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.11 as prod
 
 WORKDIR /app/src
 
@@ -9,3 +9,8 @@ RUN pip install poetry && \
 
 ADD $(pwd)/../src /app/src
 ADD $(pwd)/../scripts /app/scripts
+
+FROM prod as dev
+
+RUN apt-get update && apt-get install entr
+RUN poetry install --only=dev --no-root

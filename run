@@ -1,6 +1,6 @@
 #/bin/env bash
 
-set -e
+set -ex
 
 
 DOCKER_TAG="rpi-lights"
@@ -23,15 +23,42 @@ case $command in
         ;;
     build)
         echo "Building image"
-        docker build -t $DOCKER_TAG -f docker/Dockerfile .
+        target="$1"
+        if [ -z "$target" ]; then
+            echo "You must speficy a target [dev|prod]"
+            exit 1
+        fi
+        docker build --target $target -t $DOCKER_TAG -f docker/Dockerfile .
         ;;
     script)
-        echo "Running script /app/scripts$1"
-        docker run -it --rm --network host $DOCKER_TAG python -i /app/scripts/$1
+        echo "Running script /app/scripts/$1"
+        docker run -it --rm --network host -v $(pwd)/src:/app/src $DOCKER_TAG python -i /app/scripts/$1
+        ;;
+    test)
+        loop=false
+        args=
+        while [ $# -gt 0 ]; do
+            arg="$1"; shift
+            case $arg in
+                --loop)
+                    loop=true
+                    ;;
+                *)
+                    args="$args $arg"
+                    ;;
+            esac
+        done
+
+        if [ "$loop" = true ]; then
+            echo "Running tests in a loop"
+            find ./src -name \*.py | entr docker run -it --rm --network host -v $(pwd)/src:/app/src $DOCKER_TAG python -m pytest -s .
+        else
+            docker run -it --rm --network host -v $(pwd)/src:/app/src $DOCKER_TAG python -m pytest -s .
+        fi
         ;;
     shell)
         echo "Starting shell"
-        docker run -it --rm --network host $DOCKER_TAG bash
+        docker run -it --rm --network host -v $(pwd)/src:/app/src $DOCKER_TAG bash
         ;;
     *)
         echo "No known command $command"
