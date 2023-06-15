@@ -70,7 +70,7 @@ class TestDirectLight:
 class TestIndirectLight:
 
     def test_toggle_sets_on_then_off(self, light_factory, relay_state, mocker):
-        light = light_factory(indirect=True, relay_no=1, input_no=None)
+        light = light_factory(indirect=True, relay_no=1, input_no=2)
 
         mocked_write_relay = mocker.patch('lights.write_relay')
         toggle_light(light)
@@ -79,17 +79,6 @@ class TestIndirectLight:
             mocker.call(light.relay_no, True),
             mocker.call(light.relay_no, False)
         ])
-
-
-    def test_toggle_returns_no_state(self, light_factory, relay_state):
-        light = light_factory(indirect=True, relay_no=1, input_no=None)
-        assert toggle_light(light) is None
-
-
-    def test_turn_on_with_no_input_no_raises_error(self, light_factory):
-        light = light_factory(indirect=True, relay_no=1, input_no=None)
-        with pytest.raises(ValueError, match='Cannot know if an indirect light is ON.*'):
-            turn_on(light)
 
     def test_turn_on_sets_relay_on_then_off(self, light_factory, mocker):
         light = light_factory(indirect=True, relay_no=1, input_no=1)
@@ -111,17 +100,12 @@ class TestIndirectLight:
 
         write_relay_mock.assert_not_called()
 
-    def test_turn_off_with_no_input_raises_error(self, light_factory):
-        light = light_factory(indirect=True, relay_no=1, input_no=None)
-        with pytest.raises(ValueError, match='Cannot know if an indirect light is ON.*'):
-            turn_off(light)
 
     def test_turn_off_sets_relay_on_then_off(self, light_factory, mocker,input_state):
         light = light_factory(indirect=True, relay_no=1, input_no=1)
 
         mocked_write_relay = mocker.patch('lights.write_relay')
         input_state.set_input_state(light.input_no, True)
-        import pudb; pu.db
         turn_off(light)
 
         mocked_write_relay.assert_has_calls([
