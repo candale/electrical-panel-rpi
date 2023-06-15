@@ -5,8 +5,8 @@ from config import load_lights
 
 
 client = mqtt.Client()
-client.username_pw_set('test', 'password!')
-client.connect('192.168.1.20', 1883, 60)
+client.username_pw_set('test', 'password')
+client.connect('localhost', 1883, 60)
 client.loop_start()
 
 lights = load_lights()

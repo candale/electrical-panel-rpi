@@ -58,7 +58,7 @@ case $command in
         ;;
     shell)
         echo "Starting shell"
-        docker run -it --rm --network host -v $(pwd)/src:/app/src $DOCKER_TAG bash
+        docker run -it --rm --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_TAG bash
         ;;
     *)
         echo "No known command $command"

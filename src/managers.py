@@ -62,12 +62,10 @@ class HassMqttLighstManager(LightsManager):
         payload = msg.payload.decode()
         if payload == self.LIGHT_ON:
             logger.debug(f'Turn on light {light_id}')
-            # state = light.turn_on()
-            state = True
+            state = light.turn_on()
         elif payload == self.LIGHT_OFF:
             logger.debug(f'Turn off {light_id}')
-            # state = light.turn_off()
-            state = False
+            state = light.turn_off()
         else:
             logger.error(f'Invalid payload from mqtt: {payload}')
 
@@ -80,10 +78,10 @@ class HassMqttLighstManager(LightsManager):
         return {
             "device": {
                 "name": "Electrical Panel Controls",
-                "identifiers": 202232354225,
+                "identifiers": 202232354226,
                 "model": "Raspberry Pi Electrical Panel",
                 "manufacturer": "The Candale",
-                'sw_version': '0.1',
+                'sw_version': '0.2',
                 'hw_version': '1.0'
             }
         }
