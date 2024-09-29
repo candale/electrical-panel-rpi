@@ -62,10 +62,16 @@ class HassMqttLighstManager(LightsManager):
         payload = msg.payload.decode()
         if payload == self.LIGHT_ON:
             logger.debug(f'Turn on light {light_id}')
-            state = light.turn_on()
+            if light.light.input_no is None:
+                light.toggle()
+            else:
+                state = light.turn_on()
         elif payload == self.LIGHT_OFF:
             logger.debug(f'Turn off {light_id}')
-            state = light.turn_off()
+            if light.light.input_no is None:
+                light.toggle()
+            else:
+                state = light.turn_off()
         else:
             logger.error(f'Invalid payload from mqtt: {payload}')
 
@@ -78,10 +84,10 @@ class HassMqttLighstManager(LightsManager):
         return {
             "device": {
                 "name": "Electrical Panel Controls",
-                "identifiers": 202232354226,
+                "identifiers": 2022323542,
                 "model": "Raspberry Pi Electrical Panel",
                 "manufacturer": "The Candale",
-                'sw_version': '0.2',
+                'sw_version': '0.4',
                 'hw_version': '1.0'
             }
         }
@@ -111,7 +117,7 @@ class HassMqttLighstManager(LightsManager):
                 payload['state_topic'] = self.make_state_topic(light.id),]
 
             self.mqtt_client.publish(
-                f'homeassistant/switch/panel/{light.id}/config',
+                f'homeassistant/light/panel/{light.id}/config',
                 payload=json.dumps(payload)
             )
             self.mqtt_client.subscribe(cmd_topic)
