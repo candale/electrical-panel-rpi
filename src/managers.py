@@ -60,6 +60,7 @@ class HassMqttLighstManager(LightsManager):
         light = self[light_id]
 
         payload = msg.payload.decode()
+        state = None
         if payload == self.LIGHT_ON:
             logger.debug(f'Turn on light {light_id}')
             if light.light.input_no is None:
@@ -75,10 +76,12 @@ class HassMqttLighstManager(LightsManager):
         else:
             logger.error(f'Invalid payload from mqtt: {payload}')
 
-        self.mqtt_client.publish(
-            self.make_state_topic(light_id),
-            self.LIGHT_ON if state else self.LIGHT_OFF
-        )
+        # if not input number
+        if state is not None:
+            self.mqtt_client.publish(
+                self.make_state_topic(light_id),
+                self.LIGHT_ON if state else self.LIGHT_OFF
+            )
 
     def _make_device_description(self):
         return {
