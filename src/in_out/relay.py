@@ -1,4 +1,9 @@
+"""This is copy-pasted from sequentmicrosystems.com with some changes of my own"""
+from functools import wraps
+
 import smbus2
+
+from .utils import retry_on_os_error
 
 __version__ = "1.0.5"
 _CARD_BASE_ADDRESS = 0x20
@@ -13,7 +18,9 @@ relayMaskRemap =[0x8000, 0x4000, 0x2000, 0x1000, 0x800,	0x400, 0x200, 0x100, 0x8
 
 relayChRemap = [15,	14,	13,	12,	11,	10,	9,	8,	7,	6,	5,	4,	3,	2,	1,	0]
 
+
 class SM16relind:
+    @retry_on_os_error
     def __init__(self, stack = 0, i2c = 1):
         if stack < 0 or stack > _STACK_LEVEL_MAX:
             raise ValueError('Invalid stack level!')
@@ -24,12 +31,14 @@ class SM16relind:
             val = bus.read_word_data(self._hw_address_, _CFG_REG_ADD)
             if val != 0:
                 val = 0
+                bus.write_word_data(self._hw_address_, _OUTPORT_REG_ADD, val)
                 bus.write_word_data(self._hw_address_, _CFG_REG_ADD, val)
         except Exception as e:
             bus.close()
             raise Exception("Fail to init the card with exception " + str(e))
         bus.close()
 
+    @retry_on_os_error
     def set(self, relay, state):
         if relay < 1 or relay > _RELAY_COUNT:
             raise ValueError('Invalid relay number!')
@@ -48,6 +57,7 @@ class SM16relind:
             raise Exception("Fail set relay with exception " + str(e))
         bus.close()
 
+    @retry_on_os_error
     def set_all(self, val):
         bus = smbus2.SMBus(self._i2c_bus_no)
         val = relayToIO(val)
@@ -58,6 +68,7 @@ class SM16relind:
             raise Exception("Fail set relay with exception " + str(e))
         bus.close()
 
+    @retry_on_os_error
     def get(self, relay):
         if relay < 1 or relay > _RELAY_COUNT:
             raise ValueError('Invalid relay number!')
@@ -73,6 +84,7 @@ class SM16relind:
             return 1
         return 0
 
+    @retry_on_os_error
     def get_all(self):
         bus = smbus2.SMBus(self._i2c_bus_no)
         try:

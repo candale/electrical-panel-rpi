@@ -1,11 +1,14 @@
 import smbus2
 
+from .utils import retry_on_os_error
+
 DEVICE_ADDRESS = 0x20  # 7 bit address (will be left shifted to add the read write bit)
 INPUTS16_INPORT_REG_ADD = 0
 pinMask = [0x8000, 0x4000, 0x2000, 0x1000, 0x0800, 0x0400, 0x0200, 0x0100, 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02,
            0x01]
 
 
+@retry_on_os_error
 def readCh(stack, channel):
     if stack < 0 or stack > 7:
         raise ValueError('Invalid stack level')
@@ -25,6 +28,7 @@ def readCh(stack, channel):
     return 0
 
 
+@retry_on_os_error
 def readAll(stack):
     if stack < 0 or stack > 7:
         raise ValueError('Invalid stack level')

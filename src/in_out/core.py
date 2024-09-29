@@ -5,6 +5,11 @@ from .relay import SM16relind
 from .inputs import readCh
 
 
+def get_stack(number):
+    relay_stack = SM16relind(number)
+    return relay_stack
+
+
 def get_stack_and_relay(number):
     stack = (number // 16 ) * 2
     relay_stack = SM16relind(stack)
