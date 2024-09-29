@@ -97,16 +97,18 @@ class HassMqttLighstManager(LightsManager):
             payload.update(
                 {
                     'name': light.verbose_name,
-                    'state_topic': self.make_state_topic(light.id),
                     'object_id': f'{light.id}_light',
                     'unique_id': f'{light.id}_light',
                     'command_topic': cmd_topic,
                     'payload_on': self.LIGHT_ON,
                     'payload_off': self.LIGHT_OFF,
                     'optimistic': light.input_no is None,
-                    'device_class': 'switch',
+                    'device_class': 'light',
                 }
             )
+
+            if light.input_no is not None:
+                payload['state_topic'] = self.make_state_topic(light.id),]
 
             self.mqtt_client.publish(
                 f'homeassistant/switch/panel/{light.id}/config',

@@ -16,9 +16,9 @@ class Light:
     # relay
     indirect: bool
 
-    def __post_init__(self):
-        if self.indirect and self.input_no is None:
-            raise ValueError(f'Cannot have an indirect light without input_no [{self.id=}, {self.verbose_name=}]')
+    # def __post_init__(self):
+    #     if self.indirect and self.input_no is None:
+    #         raise ValueError(f'Cannot have an indirect light without input_no [{self.id=}, {self.verbose_name=}]')
 
 
 def rock_indirect(light: Light):
