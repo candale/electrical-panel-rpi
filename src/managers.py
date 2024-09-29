@@ -114,7 +114,7 @@ class HassMqttLighstManager(LightsManager):
             )
 
             if light.input_no is not None:
-                payload['state_topic'] = self.make_state_topic(light.id),]
+                payload['state_topic'] = self.make_state_topic(light.id)
 
             self.mqtt_client.publish(
                 f'homeassistant/light/panel/{light.id}/config',
