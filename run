@@ -36,7 +36,8 @@ case $command in
         ;;
     prod)
         echo "Starting prod run"
-        docker run -d --name electrical-panel --restart always -it --rm --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_TAG python main.py
+        # ugly hack to keep the thing running
+        docker run -d --name electrical-panel --restart always -it --rm --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_TAG python -i main.py
         ;;
     test)
         loop=false
