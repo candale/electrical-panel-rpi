@@ -24,7 +24,7 @@ class LightsManager:
             return turn_off(self.light)
 
     def __init__(self, lights: list[Light]):
-        self.lights = lights
+        self.lights: list[Light] = lights
         self._lights_mapping = {
             light.id: light for light in self.lights
         }
@@ -90,7 +90,7 @@ class HassMqttLighstManager(LightsManager):
                 "identifiers": 2022323542,
                 "model": "Raspberry Pi Electrical Panel",
                 "manufacturer": "The Candale",
-                'sw_version': '0.4',
+                'sw_version': '0.5',
                 'hw_version': '1.0'
             }
         }
@@ -123,5 +123,11 @@ class HassMqttLighstManager(LightsManager):
                 f'homeassistant/light/panel/{light.id}/config',
                 payload=json.dumps(payload)
             )
+            if light.input_no is not None:
+                self.mqtt_client.publish(
+                    self.make_state_topic(light.id),
+                    self.LIGHT_ON if get_light_state(light) else self.LIGHT_OFF
+                )
+
             self.mqtt_client.subscribe(cmd_topic)
             logger.debug(f'Published light {light.id}. Subscribed to {cmd_topic}')
