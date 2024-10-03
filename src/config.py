@@ -34,7 +34,7 @@ configuration = {
             "verbose_name": "Stairs Light",
             "relay_no": 11,
             # panel analog: 14
-            "input_no": None,
+            "input_no": 23,
             "indirect": True
         },
         {
@@ -42,7 +42,7 @@ configuration = {
             "verbose_name": "Living Square Light",
             "relay_no": 12,
             # panel analog: 13
-            "input_no": None,
+            "input_no": 22,
             "indirect": True
         },
         {
@@ -50,7 +50,7 @@ configuration = {
             "verbose_name": "Living Center Light",
             "relay_no": 13,
             # panel analog: 12
-            "input_no": None,
+            "input_no": 21,
             "indirect": True
         },
         {
@@ -58,7 +58,7 @@ configuration = {
             "verbose_name": "Terrace Exit Light",
             "relay_no": 14,
             # panel analog: 11
-            "input_no": None,
+            "input_no": 20,
             "indirect": True
         },
         {
@@ -66,7 +66,7 @@ configuration = {
             "verbose_name": "Exterior Yard Light",
             "relay_no": 15,
             # panel analog: 21
-            "input_no": None,
+            "input_no": 19,
             "indirect": True
         },
         {
@@ -74,7 +74,7 @@ configuration = {
             "verbose_name": "Exterior Road Light",
             "relay_no": 24,
             # panel analog: 20
-            "input_no": None,
+            "input_no": 18,
             "indirect": True
         },
         {
@@ -82,7 +82,7 @@ configuration = {
             "verbose_name": "Hallway Entrance Light",
             "relay_no": 25,
             # panel analog: 19
-            "input_no": None,
+            "input_no": 17,
             "indirect": True
         },
         {
@@ -90,7 +90,7 @@ configuration = {
             "verbose_name": "Dinning Light",
             "relay_no": 26,
             # panel analog: 10
-            "input_no": None,
+            "input_no": 16,
             "indirect": True
         },
         {
@@ -98,7 +98,7 @@ configuration = {
             "verbose_name": "Dinning Way Light",
             "relay_no": 27,
             # panel analog: 9
-            "input_no": None,
+            "input_no": 24,
             "indirect": True
         },
         {
@@ -106,7 +106,7 @@ configuration = {
             "verbose_name": "Main Way Light",
             "relay_no": 28,
             # panel analog: 8
-            "input_no": None,
+            "input_no": 25,
             "indirect": True
         },
         {
@@ -114,7 +114,7 @@ configuration = {
             "verbose_name": "Bedroom Way Light",
             "relay_no": 29,
             # panel analog: 7
-            "input_no": None,
+            "input_no": 26,
             "indirect": True
         },
         {
@@ -122,7 +122,7 @@ configuration = {
             "verbose_name": "Dressing Light",
             "relay_no": 30,
             # panel analog: 5
-            "input_no": None,
+            "input_no": 27,
             "indirect": True
         },
         {
@@ -130,7 +130,7 @@ configuration = {
             "verbose_name": "Bathroom Shower Light",
             "relay_no": 31,
             # panel analog: 4
-            "input_no": None,
+            "input_no": 28,
             "indirect": True
         }
     ]
