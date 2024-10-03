@@ -1,6 +1,8 @@
 import json
+import time
 from loguru import logger
 from lights import Light, get_light_state, toggle_light, turn_on, turn_off
+from in_out.core import read_all_inputs
 
 
 class LightsManager:
@@ -50,6 +52,7 @@ class HassMqttLighstManager(LightsManager):
         self.mqtt_client = mqtt_client
         self.setup_mqtt_client()
         self.advertise_to_hass()
+        self.states = {}
 
     def setup_mqtt_client(self):
         self.mqtt_client.on_message = self.handle_mqtt_msg
@@ -124,10 +127,27 @@ class HassMqttLighstManager(LightsManager):
                 payload=json.dumps(payload)
             )
             if light.input_no is not None:
+                state = get_light_state(light)
+                self.states[light.id] == state
                 self.mqtt_client.publish(
                     self.make_state_topic(light.id),
-                    self.LIGHT_ON if get_light_state(light) else self.LIGHT_OFF
+                    self.LIGHT_ON if state else self.LIGHT_OFF
                 )
 
             self.mqtt_client.subscribe(cmd_topic)
             logger.debug(f'Published light {light.id}. Subscribed to {cmd_topic}')
+
+    def observe_forever(self):
+        logger.info('Observing lights forever')
+        while True:
+            for light in self.lights:
+                state = get_light_state(light)
+                if state != self.states[light.id]:
+                    logger.debug(f'Light {light.id} changed from {self.states[light.id]} to {state}')
+                    self.mqtt_client.publish(
+                        self.make_state_topic(light.id),
+                        self.LIGHT_ON if state else self.LIGHT_OFF
+                    )
+                    self.states[light.id] = state
+
+            time.sleep(0.3)

@@ -41,9 +41,9 @@ def readAll(stack):
         bus.close()
         raise Exception(e)
     bus.close()
-    ret = 0
+    ret = []
     for i in range(16):
-        if val & pinMask[i] == 0:
-            ret += 1 << i
+        ret.append(val & pinMask[i] == 0)
+
     return ret
 

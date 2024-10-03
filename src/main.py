@@ -11,3 +11,4 @@ client.loop_start()
 
 lights = load_lights()
 manager = HassMqttLighstManager(lights, client)
+manager.observe_forever()

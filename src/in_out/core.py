@@ -2,7 +2,7 @@ import time
 
 
 from .relay import SM16relind
-from .inputs import readCh
+from .inputs import readCh, readAll
 
 
 def get_stack(number):
@@ -11,6 +11,9 @@ def get_stack(number):
 
 
 def get_stack_and_relay(number):
+    """
+    This assumes that the relay boards are on even levels in the stack
+    """
     stack = (number // 16 ) * 2
     relay_stack = SM16relind(stack)
     relay = (number if number < 16 else number - 16) + 1
@@ -52,7 +55,10 @@ def clear_relays():
 
 
 def get_stack_and_input(number):
-    stack = 1 if number < 16 else 3
+    """
+    This assumes that the relay boards are on odd levels in the stack
+    """
+    stack = (number // 16 ) * 2 + 1
     input_ch = (number if number < 16 else number - 16) + 1
     return stack, input_ch
 
@@ -60,3 +66,13 @@ def get_stack_and_input(number):
 def read_input(number):
     stack, input_ch = get_stack_and_input(number)
     return readCh(stack, input_ch) == 1
+
+
+def read_all_inputs():
+    """
+    This assumes that we have only two boards with inputs, on level 1 and 3
+    """
+    first_stack = readAll(1)
+    second_stack = readAll(3)
+
+    return first_stack + second_stack
