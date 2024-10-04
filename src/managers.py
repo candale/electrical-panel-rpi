@@ -128,7 +128,7 @@ class HassMqttLighstManager(LightsManager):
             )
             if light.input_no is not None:
                 state = get_light_state(light)
-                self.states[light.id] == state
+                self.states[light.id] = state
                 self.mqtt_client.publish(
                     self.make_state_topic(light.id),
                     self.LIGHT_ON if state else self.LIGHT_OFF
@@ -141,6 +141,9 @@ class HassMqttLighstManager(LightsManager):
         logger.info('Observing lights forever')
         while True:
             for light in self.lights:
+                if light.indirect and light.input_no is None:
+                    continue
+
                 state = get_light_state(light)
                 if state != self.states[light.id]:
                     logger.debug(f'Light {light.id} changed from {self.states[light.id]} to {state}')

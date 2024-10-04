@@ -16,15 +16,11 @@ class Light:
     # relay
     indirect: bool
 
-    # def __post_init__(self):
-    #     if self.indirect and self.input_no is None:
-    #         raise ValueError(f'Cannot have an indirect light without input_no [{self.id=}, {self.verbose_name=}]')
-
 
 def rock_indirect(light: Light):
     """Rock the relay to set the state for the latching relay"""
     write_relay(light.relay_no, True)
-    time.sleep(0.3)
+    time.sleep(0.2)
     write_relay(light.relay_no, False)
 
 
