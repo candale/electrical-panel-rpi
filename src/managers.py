@@ -98,16 +98,16 @@ class HassMqttLighstManager(LightsManager):
             }
         }
 
-    def make_state_topic(self, light: Light):
-        return f'{self.MQTT_PREFIX}/{light.id}/state'
+    def make_state_topic(self, light_id).id:
+        return f'{self.MQTT_PREFIX}/{light_id}/state'
 
-    def make_cmd_topic(self, light: Light):
-        return f'{self.MQTT_PREFIX}/{light.id}/cmd'
+    def make_cmd_topic(self, light_id):
+        return f'{self.MQTT_PREFIX}/{light_id}/cmd'
 
     def advertise_to_hass(self):
         for light in self.lights:
             payload = self._make_device_description()
-            cmd_topic = self.make_cmd_topic(light)
+            cmd_topic = self.make_cmd_topic(light.id)
 
             payload.update(
                 {
@@ -123,7 +123,7 @@ class HassMqttLighstManager(LightsManager):
             )
 
             if light.input_no is not None:
-                payload['state_topic'] = self.make_state_topic(light)
+                payload['state_topic'] = self.make_state_topic(light.id)
 
             self.mqtt_client.publish(
                 f'homeassistant/light/panel/{light.id}/config',
@@ -133,7 +133,7 @@ class HassMqttLighstManager(LightsManager):
                 state = get_light_state(light)
                 self.states[light.id] = state
                 self.mqtt_client.publish(
-                    self.make_state_topic(light),
+                    self.make_state_topic(light.id),
                     self.LIGHT_ON if state else self.LIGHT_OFF
                 )
                 logger.debug(f"Published light's {light.id} state as {state}" )
