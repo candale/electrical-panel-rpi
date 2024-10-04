@@ -10,7 +10,7 @@ configuration = {
             "verbose_name": "Pantry Light",
             "relay_no":  8,
             # panel analog: 18
-            "input_no": None,
+            "input_no": 4,
             "indirect": True
         },
         {
@@ -26,7 +26,7 @@ configuration = {
             "verbose_name": "Kitchen Light",
             "relay_no": 10,
             # panel analog: 16
-            "input_no": None,
+            "input_no": 3,
             "indirect": True
         },
         {
@@ -150,8 +150,8 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "bedroom_small_light",
-            "verbose_name": "Bedroom Small Light",
+            "id": "bedroom_master_light",
+            "verbose_name": "Bedroom Master Light",
             "relay_no": 18,
             # panel analog: 1
             "input_no": 29,
