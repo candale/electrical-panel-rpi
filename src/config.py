@@ -161,7 +161,7 @@ configuration = {
 }
 
 
-def loads() -> list[Light]:
+def load_lights() -> list[Light]:
     lights = []
     for index, light_config in enumerate(configuration["lights"]):
         try:
