@@ -35,9 +35,11 @@ case $command in
         docker run -it --rm --network host -v $(pwd)/scripts:/app/scripts -v $(pwd)/src:/app/src $DOCKER_TAG python -i /app/scripts/$1
         ;;
     prod)
-        echo "Starting prod run"
-        # ugly hack to keep the thing running
-        docker run -d --name electrical-panel --restart always -it --rm --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_TAG python -i main.py
+        echo "Stopping existing installation, if it exists"
+        docker kill electrical-panel || true
+        docker rm electrical-panel || true
+        echo "Starting prod server"
+        docker run -d --name electrical-panel --restart always -it --rm --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_TAG python main.py
         ;;
     test)
         loop=false
