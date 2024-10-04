@@ -3,7 +3,7 @@ FROM python:3.11 as prod
 WORKDIR /app/src
 
 ADD $(pwd)/../pyproject.toml $(pwd)/../poetry.lock /app
-RUN pip install poetry && \
+RUN pip install poetry==1.8.3 && \
     poetry config virtualenvs.create false && \
     poetry install --no-dev --no-ansi --no-interaction --no-root
 

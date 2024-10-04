@@ -51,8 +51,8 @@ class HassMqttLighstManager(LightsManager):
         super().__init__(lights)
         self.mqtt_client = mqtt_client
         self.setup_mqtt_client()
-        self.advertise_to_hass()
         self.states = {}
+        self.advertise_to_hass()
 
     def setup_mqtt_client(self):
         self.mqtt_client.on_message = self.handle_mqtt_msg

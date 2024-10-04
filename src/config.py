@@ -132,6 +132,30 @@ configuration = {
             # panel analog: 4
             "input_no": 28,
             "indirect": True
+        },
+        {
+            "id": "tub_shower_light",
+            "verbose_name": "Bathroom Tub Light",
+            "relay_no": 16,
+            # panel analog: 3
+            "input_no": 31,
+            "indirect": True
+        },
+        {
+            "id": "bedroom_small_light",
+            "verbose_name": "Bedroom Small Light",
+            "relay_no": 17,
+            # panel analog: 2
+            "input_no": 30,
+            "indirect": True
+        },
+        {
+            "id": "bedroom_small_light",
+            "verbose_name": "Bedroom Small Light",
+            "relay_no": 18,
+            # panel analog: 1
+            "input_no": 29,
+            "indirect": True
         }
     ]
 }
