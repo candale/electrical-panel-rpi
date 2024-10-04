@@ -98,7 +98,7 @@ class HassMqttLighstManager(LightsManager):
             }
         }
 
-    def make_state_topic(self, light_id).id:
+    def make_state_topic(self, light_id):
         return f'{self.MQTT_PREFIX}/{light_id}/state'
 
     def make_cmd_topic(self, light_id):
