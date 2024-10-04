@@ -6,7 +6,7 @@ from lights import Light
 configuration = {
     "lights": [
         {
-            "id": "pantry_light",
+            "id": "pantry",
             "verbose_name": "Pantry Light",
             "relay_no":  8,
             # panel analog: 18
@@ -22,7 +22,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "kitchen_light",
+            "id": "kitchen",
             "verbose_name": "Kitchen Light",
             "relay_no": 10,
             # panel analog: 16
@@ -30,7 +30,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "stairs_light",
+            "id": "stairs",
             "verbose_name": "Stairs Light",
             "relay_no": 11,
             # panel analog: 14
@@ -38,7 +38,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "living_square_light",
+            "id": "living_square",
             "verbose_name": "Living Square Light",
             "relay_no": 12,
             # panel analog: 13
@@ -46,7 +46,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "living_center_light",
+            "id": "living_center",
             "verbose_name": "Living Center Light",
             "relay_no": 13,
             # panel analog: 12
@@ -54,7 +54,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "terrace_exit_light",
+            "id": "terrace_exit",
             "verbose_name": "Terrace Exit Light",
             "relay_no": 14,
             # panel analog: 11
@@ -62,7 +62,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "exterior_yard_light",
+            "id": "exterior_yard",
             "verbose_name": "Exterior Yard Light",
             "relay_no": 15,
             # panel analog: 21
@@ -70,7 +70,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "exterior_road_light",
+            "id": "exterior_road",
             "verbose_name": "Exterior Road Light",
             "relay_no": 24,
             # panel analog: 20
@@ -78,7 +78,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "hallway_entrance_light",
+            "id": "hallway_entrance",
             "verbose_name": "Hallway Entrance Light",
             "relay_no": 25,
             # panel analog: 19
@@ -86,7 +86,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "dinning_light",
+            "id": "dinning",
             "verbose_name": "Dinning Light",
             "relay_no": 26,
             # panel analog: 10
@@ -94,7 +94,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "dinning_way_light",
+            "id": "dinning_way",
             "verbose_name": "Dinning Way Light",
             "relay_no": 27,
             # panel analog: 9
@@ -102,7 +102,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "main_way_light",
+            "id": "main_way",
             "verbose_name": "Main Way Light",
             "relay_no": 28,
             # panel analog: 8
@@ -110,7 +110,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "bedroom_way_light",
+            "id": "bedroom_way",
             "verbose_name": "Bedroom Way Light",
             "relay_no": 29,
             # panel analog: 7
@@ -118,7 +118,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "dressing_light",
+            "id": "dressing",
             "verbose_name": "Dressing Light",
             "relay_no": 30,
             # panel analog: 5
@@ -126,7 +126,7 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "bathroom_shower_light",
+            "id": "bathroom_shower",
             "verbose_name": "Bathroom Shower Light",
             "relay_no": 31,
             # panel analog: 4
@@ -134,15 +134,15 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "tub_shower_light",
+            "id": "tub_shower",
             "verbose_name": "Bathroom Tub Light",
             "relay_no": 16,
             # panel analog: 3
-            "input_no": 31,
+            "input_no": 29,
             "indirect": True
         },
         {
-            "id": "bedroom_small_light",
+            "id": "bedroom_small",
             "verbose_name": "Bedroom Small Light",
             "relay_no": 17,
             # panel analog: 2
@@ -150,18 +150,18 @@ configuration = {
             "indirect": True
         },
         {
-            "id": "bedroom_master_light",
+            "id": "bedroom_master",
             "verbose_name": "Bedroom Master Light",
             "relay_no": 18,
             # panel analog: 1
-            "input_no": 29,
+            "input_no": 31,
             "indirect": True
         }
     ]
 }
 
 
-def load_lights() -> list[Light]:
+def loads() -> list[Light]:
     lights = []
     for index, light_config in enumerate(configuration["lights"]):
         try:
