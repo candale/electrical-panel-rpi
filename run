@@ -39,7 +39,7 @@ case $command in
         docker kill electrical-panel || true
         docker rm electrical-panel || true
         echo "Starting prod server"
-        docker run -d --name electrical-panel --restart always -it --rm --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_TAG python main.py
+        docker run -d --name electrical-panel --restart always -it --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_TAG python main.py
         ;;
     test)
         loop=false
