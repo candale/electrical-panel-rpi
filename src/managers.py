@@ -135,7 +135,7 @@ class HassMqttLighstManager(LightsManager):
                 )
 
             self.mqtt_client.subscribe(cmd_topic)
-            logger.debug(f'Published light {light.id}. Subscribed to {cmd_topic}')
+            logger.debug(f'Published light {light.id}_light. Subscribed to {cmd_topic}')
 
     def observe_forever(self):
         logger.info('Observing lights forever')
