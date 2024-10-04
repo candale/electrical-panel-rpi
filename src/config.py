@@ -10,7 +10,7 @@ configuration = {
             "verbose_name": "Pantry Light",
             "relay_no":  8,
             # panel analog: 18
-            "input_no": 6,
+            "input_no": 5,
             "indirect": True
         },
         {
@@ -18,7 +18,7 @@ configuration = {
             "verbose_name": "Litchen Led",
             "relay_no":  9,
             # panel analog: 17
-            "input_no": 4,
+            "input_no": 3,
             "indirect": True
         },
         {
@@ -26,7 +26,7 @@ configuration = {
             "verbose_name": "Kitchen Light",
             "relay_no": 10,
             # panel analog: 16
-            "input_no": 5,
+            "input_no": 4,
             "indirect": True
         },
         {
