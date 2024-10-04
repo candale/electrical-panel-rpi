@@ -90,7 +90,7 @@ class HassMqttLighstManager(LightsManager):
         return {
             "device": {
                 "name": "Electrical Panel Controls",
-                "identifiers": 2022323542,
+                "identifiers": 20223235422,
                 "model": "Raspberry Pi Electrical Panel",
                 "manufacturer": "The Candale",
                 'sw_version': '0.5',
@@ -98,13 +98,16 @@ class HassMqttLighstManager(LightsManager):
             }
         }
 
-    def make_state_topic(self, light_id):
-        return f'{self.MQTT_PREFIX}/{light_id}/state'
+    def make_state_topic(self, light: Light):
+        return f'{self.MQTT_PREFIX}/{light.id}/state'
+
+    def make_cmd_topic(self, light: Light):
+        return f'{self.MQTT_PREFIX}/{light.id}/cmd'
 
     def advertise_to_hass(self):
         for light in self.lights:
             payload = self._make_device_description()
-            cmd_topic = f'{self.MQTT_PREFIX}/{light.id}/cmd'
+            cmd_topic = self.make_cmd_topic(light)
 
             payload.update(
                 {
@@ -120,7 +123,7 @@ class HassMqttLighstManager(LightsManager):
             )
 
             if light.input_no is not None:
-                payload['state_topic'] = self.make_state_topic(light.id)
+                payload['state_topic'] = self.make_state_topic(light)
 
             self.mqtt_client.publish(
                 f'homeassistant/light/panel/{light.id}/config',
@@ -130,9 +133,10 @@ class HassMqttLighstManager(LightsManager):
                 state = get_light_state(light)
                 self.states[light.id] = state
                 self.mqtt_client.publish(
-                    self.make_state_topic(light.id),
+                    self.make_state_topic(light),
                     self.LIGHT_ON if state else self.LIGHT_OFF
                 )
+                logger.debug(f"Published light's {light.id} state as {state}" )
 
             self.mqtt_client.subscribe(cmd_topic)
             logger.debug(f'Published light {light.id}_light. Subscribed to {cmd_topic}')
