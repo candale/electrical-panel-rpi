@@ -264,6 +264,20 @@ files = [
 smbus2 = "*"
 
 [[package]]
+name = "sm16relind"
+version = "1.0.2"
+description = "Library to control Multi-IO Automation Card"
+optional = false
+python-versions = "*"
+files = [
+    {file = "SM16relind-1.0.2-py2.py3-none-any.whl", hash = "sha256:7b07ba82360b7fcdf806803108e7c39d8f38e555391a1ab0cebd7f340f8f35e2"},
+    {file = "SM16relind-1.0.2.tar.gz", hash = "sha256:dc2b871f92620e9ad2ef5a33ef6c5c49af6fd7cd61705017d29eb0113f1322ef"},
+]
+
+[package.dependencies]
+smbus2 = "*"
+
+[[package]]
 name = "smbus2"
 version = "0.4.2"
 description = "smbus2 is a drop-in replacement for smbus-cffi/smbus-python in pure Python"
@@ -333,4 +347,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d9877b4278e18559d878571ff318f3f2ad8f9e26ca49286746bcce4e411ff321"
+content-hash = "b71f24f2f9376b31c2419631bb535b821cef61f0d08879203f7433732ef9684d"

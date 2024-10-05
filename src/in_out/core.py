@@ -1,8 +1,8 @@
 import time
 
 import lib16inpind
+import SM16relind
 
-from .relay import SM16relind
 from .inputs import readCh, readAll
 
 

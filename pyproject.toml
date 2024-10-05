@@ -13,6 +13,7 @@ pyyaml = "^6.0"
 smbus2 = "^0.4.2"
 loguru = "^0.7.0"
 sm16inpind = "^1.0.1"
+sm16relind = "^1.0.2"
 
 [tool.poetry.group.dev.dependencies]
 pudb = "^2022.1.3"
