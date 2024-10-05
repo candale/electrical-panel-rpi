@@ -73,6 +73,7 @@ def turn_on(light: Light):
         new_state = current_state
 
     if new_state is None:
+        time.sleep(0.075)
         new_state = get_light_state(light)
 
     return new_state
