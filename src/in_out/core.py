@@ -1,5 +1,6 @@
 import time
 
+import lib16inpind
 
 from .relay import SM16relind
 from .inputs import readCh, readAll
@@ -65,7 +66,8 @@ def get_stack_and_input(number):
 
 def read_input(number):
     stack, input_ch = get_stack_and_input(number)
-    return readCh(stack, input_ch) == 1
+    state = lib16inpind.readCh(stack, input_ch) == 1
+    return state
 
 
 def read_all_inputs():
