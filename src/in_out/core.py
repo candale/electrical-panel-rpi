@@ -16,7 +16,7 @@ def get_stack_and_relay(number):
     This assumes that the relay boards are on even levels in the stack
     """
     stack = (number // 16 ) * 2
-    relay_stack = SM16relind(stack)
+    relay_stack = SM16relind.SM16relind(stack)
     relay = (number if number < 16 else number - 16) + 1
     return relay_stack, relay
 
