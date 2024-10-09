@@ -184,6 +184,10 @@ class HassMqttLighstManager(LightsManager):
         )
 
     def observe_forever(self):
+        while self._initialized is False:
+            logger.debug('Waiting for completed initialization')
+            time.sleep(1)
+
         logger.info('Observing lights forever')
         while True:
             for light in self.lights:
