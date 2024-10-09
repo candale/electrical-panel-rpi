@@ -1,4 +1,4 @@
-from os import environ
+import os
 
 import paho.mqtt.client as mqtt
 from loguru import logger

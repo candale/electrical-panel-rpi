@@ -50,7 +50,7 @@ class HassMqttLighstManager(LightsManager):
     LIGHTS_UNAVAILABLE = 'false'
     # Use the same topic as availability for all lights. This makes us able
     # to use last will as offline
-    AVAILABILITY_TOPIC = f'{self.MQTT_PREFIX}/_all/avail'
+    AVAILABILITY_TOPIC = f'{MQTT_PREFIX}/_all/avail'
 
     def __init__(self, lights, mqtt_client):
         """
@@ -60,8 +60,8 @@ class HassMqttLighstManager(LightsManager):
         super().__init__(lights)
         self.mqtt_client = mqtt_client
         self.states = {}
+        self._initialized = False
         self.setup_mqtt_client()
-        self.advertise_to_hass()
 
     def setup_mqtt_client(self):
         self.mqtt_client.on_message = self.handle_mqtt_msg
@@ -125,6 +125,10 @@ class HassMqttLighstManager(LightsManager):
     def on_connect(self, client, userdata, flags, rc):
         logger.info('Connected to mqtt')
         logger.debug('Publishing availability')
+        if not self._initialized:
+            self.advertise_to_hass()
+            self._initialized = True
+
         self.mqtt_client.publish(
             self.AVAILABILITY_TOPIC,
             payload=self.LIGHTS_AVAILABLE
@@ -138,7 +142,6 @@ class HassMqttLighstManager(LightsManager):
         for light in self.lights:
             payload = self._make_device_description()
             cmd_topic = self.make_cmd_topic(light.id)
-            availability_topic = self.make_availability_topic(light.id)
 
             payload.update(
                 {
