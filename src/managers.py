@@ -127,6 +127,7 @@ class HassMqttLighstManager(LightsManager):
         logger.info('Connected to mqtt')
         logger.debug('Publishing availability')
         self.advertise_to_hass()
+        self._initialized = True
 
         self.mqtt_client.publish(
             self.AVAILABILITY_TOPIC,
