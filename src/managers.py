@@ -71,6 +71,7 @@ class HassMqttLighstManager(LightsManager):
         logger.debug('Setup mqtt client complete')
 
     def handle_mqtt_msg(self, client, userdata, msg):
+        logger.debug(f'Got message: {msg}')
         light_id = msg.topic.split('/')[1]
         light = self[light_id]
 
@@ -125,9 +126,7 @@ class HassMqttLighstManager(LightsManager):
     def on_connect(self, client, userdata, flags, rc):
         logger.info('Connected to mqtt')
         logger.debug('Publishing availability')
-        if not self._initialized:
-            self.advertise_to_hass()
-            self._initialized = True
+        self.advertise_to_hass()
 
         self.mqtt_client.publish(
             self.AVAILABILITY_TOPIC,
