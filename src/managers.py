@@ -46,17 +46,29 @@ class HassMqttLighstManager(LightsManager):
     LIGHT_OFF = 'off'
     LIGHT_ON = 'on'
     MQTT_PREFIX = 'panel'
+    LIGHTS_AVAILABLE = 'true'
+    LIGHTS_UNAVAILABLE = 'false'
+    # Use the same topic as availability for all lights. This makes us able
+    # to use last will as offline
+    AVAILABILITY_TOPIC = f'{self.MQTT_PREFIX}/_all/avail'
 
     def __init__(self, lights, mqtt_client):
+        """
+        The mqtt client is a configured but not started client, i.e. loop_start
+        was not called; .connect was called.
+        """
         super().__init__(lights)
         self.mqtt_client = mqtt_client
-        self.setup_mqtt_client()
         self.states = {}
+        self.setup_mqtt_client()
         self.advertise_to_hass()
 
     def setup_mqtt_client(self):
         self.mqtt_client.on_message = self.handle_mqtt_msg
-        logger.debug('Setup mqtt client')
+        self.mqtt_client.on_connect = self.on_connect
+        self.mqtt_client.on_disconnect = self.on_disconnect
+        self.mqtt_client.loop_start()
+        logger.debug('Setup mqtt client complete')
 
     def handle_mqtt_msg(self, client, userdata, msg):
         light_id = msg.topic.split('/')[1]
@@ -104,10 +116,29 @@ class HassMqttLighstManager(LightsManager):
     def make_cmd_topic(self, light_id):
         return f'{self.MQTT_PREFIX}/{light_id}/cmd'
 
+    def make_availability_topic(self, light_id):
+        return f'{self.MQTT_PREFIX}/{light_id}/avail'
+
+    def set_last_will(self, mqtt_client):
+        mqtt_client.will_set(self.AVAILABILITY_TOPIC, payload=self.LIGHTS_UNAVAILABLE, retain=True)
+
+    def on_connect(self, client, userdata, flags, rc):
+        logger.info('Connected to mqtt')
+        logger.debug('Publishing availability')
+        self.mqtt_client.publish(
+            self.AVAILABILITY_TOPIC,
+            payload=self.LIGHTS_AVAILABLE
+        )
+
+    def on_disconnect(self, client, userdata, rc):
+        if rc != 0:
+            logger.warning('Disconnected from Broker. Reconnecting...')
+
     def advertise_to_hass(self):
         for light in self.lights:
             payload = self._make_device_description()
             cmd_topic = self.make_cmd_topic(light.id)
+            availability_topic = self.make_availability_topic(light.id)
 
             payload.update(
                 {
@@ -119,6 +150,9 @@ class HassMqttLighstManager(LightsManager):
                     'payload_off': self.LIGHT_OFF,
                     'optimistic': light.input_no is None,
                     'device_class': 'light',
+                    'availability_topic': self.AVAILABILITY_TOPIC,
+                    'payload_available': self.LIGHTS_AVAILABLE,
+                    'payload_not_available': self.LIGHTS_UNAVAILABLE
                 }
             )
 
@@ -140,6 +174,11 @@ class HassMqttLighstManager(LightsManager):
 
             self.mqtt_client.subscribe(cmd_topic)
             logger.debug(f'Published light {light.id}_light. Subscribed to {cmd_topic}')
+
+        self.mqtt_client.publish(
+            self.AVAILABILITY_TOPIC,
+            payload=self.LIGHTS_AVAILABLE
+        )
 
     def observe_forever(self):
         logger.info('Observing lights forever')

@@ -4,6 +4,10 @@ set -ex
 
 
 DOCKER_TAG="rpi-lights"
+DOCKER_ARGS=''
+if [ -f .config ]; then
+    DOCKER_ARGS='--env-file .config'
+fi
 
 
 command="$1"; shift
@@ -32,14 +36,16 @@ case $command in
         ;;
     script)
         echo "Running script /app/scripts/$1"
-        docker run -it --rm --network host -v $(pwd)/scripts:/app/scripts -v $(pwd)/src:/app/src $DOCKER_TAG python -i /app/scripts/$1
+        docker run -it --rm --network host -v $(pwd)/scripts:/app/scripts -v $(pwd)/src:/app/src $DOCKER_ARGS $DOCKER_TAG python -i /app/scripts/$1
         ;;
     prod)
         echo "Stopping existing installation, if it exists"
         docker kill electrical-panel || true
         docker rm electrical-panel || true
+
         echo "Starting prod server"
-        docker run -d --name electrical-panel --restart always -it --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_TAG python main.py
+
+        docker run -d --name electrical-panel --restart always -it --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_ARGS $DOCKER_TAG python main.py
         ;;
     test)
         loop=false
@@ -65,7 +71,7 @@ case $command in
         ;;
     shell)
         echo "Starting shell"
-        docker run -it --rm --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_TAG bash
+        docker run -it --rm --network host --device /dev/i2c-1 -v $(pwd)/src:/app/src $DOCKER_ARGS $DOCKER_TAG bash
         ;;
     *)
         echo "No known command $command"

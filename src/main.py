@@ -1,26 +1,18 @@
+from os import environ
+
 import paho.mqtt.client as mqtt
 from loguru import logger
 from managers import HassMqttLighstManager
 from config import load_lights
 
 
-def on_connect(client, userdata, flags, rc):
-    logger.info('Connected to mqtt')
-
-
-def on_disconnect(client, userdata, rc):
-    if rc != 0:
-        logger.warning('Disconnected from Broker. Reconnecting...')
-
+USERNAME = os.environ['MQTT_USERNAME']
+PASSWORD = os.environ['MQTT_PASSWORD']
+HOSTNAME = os.environ['MQTT_HOSTNAME']
 
 client = mqtt.Client()
-client.username_pw_set('test', 'password')
-client.connect('localhost', 1883, 60)
-
-client.on_connect = on_connect
-client.on_disconnect = on_disconnect
-
-client.loop_start()
+client.username_pw_set(USERNAME, PASSWORD)
+client.connect(HOSTNAME, 1883, 60)
 
 lights = load_lights()
 manager = HassMqttLighstManager(lights, client)
