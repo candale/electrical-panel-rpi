@@ -1,10 +1,7 @@
-from logging import getLogger
 import paho.mqtt.client as mqtt
+from loguru import logger
 from managers import HassMqttLighstManager
 from config import load_lights
-
-
-logger = getLogger(__name__)
 
 
 def on_connect(client, userdata, flags, rc):
