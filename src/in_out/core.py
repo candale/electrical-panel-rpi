@@ -1,9 +1,8 @@
 import time
 
-import lib16inpind
-import SM16relind
-
+from .relay import SM16relind
 from .inputs import readCh, readAll
+from .i2c import i2c_bus
 
 
 def get_stack(number):
@@ -16,7 +15,8 @@ def get_stack_and_relay(number):
     This assumes that the relay boards are on even levels in the stack
     """
     stack = (number // 16 ) * 2
-    relay_stack = SM16relind.SM16relind(stack)
+    with i2c_bus() as bus:
+        relay_stack = SM16relind(bus, stack)
     relay = (number if number < 16 else number - 16) + 1
     return relay_stack, relay
 
@@ -66,7 +66,8 @@ def get_stack_and_input(number):
 
 def read_input(number):
     stack, input_ch = get_stack_and_input(number)
-    state = lib16inpind.readCh(stack, input_ch) == 1
+    with i2c_bus() as bus:
+        state = readCh(bus, stack, input_ch) == 1
     return state
 
 
@@ -74,7 +75,8 @@ def read_all_inputs():
     """
     This assumes that we have only two boards with inputs, on level 1 and 3
     """
-    first_stack = readAll(1)
-    second_stack = readAll(3)
+    with i2c_bus() as bus:
+        first_stack = readAll(bus, 1)
+        second_stack = readAll(bus, 3)
 
     return first_stack + second_stack
