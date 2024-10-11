@@ -1,6 +1,4 @@
-import smbus2
-
-from .utils import retry_on_os_error
+from .i2c import i2c_bus
 
 DEVICE_ADDRESS = 0x20  # 7 bit address (will be left shifted to add the read write bit)
 INPUTS16_INPORT_REG_ADD = 0
@@ -8,42 +6,31 @@ pinMask = [0x8000, 0x4000, 0x2000, 0x1000, 0x0800, 0x0400, 0x0200, 0x0100, 0x80,
            0x01]
 
 
-@retry_on_os_error
 def readCh(stack, channel):
     if stack < 0 or stack > 7:
         raise ValueError('Invalid stack level')
     stack = 0x07 ^ stack
     if channel < 1 or channel > 16:
         raise ValueError('Invalid channel')
-    bus = smbus2.SMBus(1)
     hw_add = DEVICE_ADDRESS + stack
-    try:
+    with i2c_bus() as bus:
         val = bus.read_word_data(hw_add, INPUTS16_INPORT_REG_ADD)
-    except Exception as e:
-        bus.close()
-        raise Exception(e)
-    bus.close()
+
     if val & pinMask[channel - 1] == 0:
         return 1
     return 0
 
 
-@retry_on_os_error
 def readAll(stack):
     if stack < 0 or stack > 7:
         raise ValueError('Invalid stack level')
     stack = 0x07 ^ stack
-    bus = smbus2.SMBus(1)
     hw_add = DEVICE_ADDRESS + stack
-    try:
+    with i2c_bus() as bus:
         val = bus.read_word_data(hw_add, INPUTS16_INPORT_REG_ADD)
-    except Exception as e:
-        bus.close()
-        raise Exception(e)
-    bus.close()
-    ret = []
+
+    ret = 0
     for i in range(16):
-        ret.append(val & pinMask[i] == 0)
-
+        if val & pinMask[i] == 0:
+            ret += 1 << i
     return ret
-
