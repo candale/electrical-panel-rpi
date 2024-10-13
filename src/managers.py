@@ -196,7 +196,7 @@ class HassMqttLighstManager(LightsManager):
         ]
         while True:
             lights_states = get_many_lights_state(indirect_lights)
-            for light in indirect:
+            for light in indirect_lights:
                 state = lights_states[light.input_no]
                 if state != self.states[light.id]:
                     logger.debug(f'Light {light.id} changed from {self.states[light.id]} to {state}')
