@@ -1,8 +1,9 @@
 import json
 import time
 from loguru import logger
-from lights import Light, get_light_state, toggle_light, turn_on, turn_off
-from in_out.core import read_all_inputs
+from lights import (
+    Light, get_light_state, toggle_light, turn_on, turn_off, get_many_lights_state
+)
 
 
 class LightsManager:
@@ -189,12 +190,14 @@ class HassMqttLighstManager(LightsManager):
             time.sleep(1)
 
         logger.info('Observing lights forever')
+        # TODO: make sure you report the state of the direct lights as well
+        indirect_lights = [
+            light for light in self.lights if light.indirect and light.input_no is not None
+        ]
         while True:
-            for light in self.lights:
-                if light.indirect and light.input_no is None:
-                    continue
-
-                state = get_light_state(light)
+            lights_states = get_many_lights_state(indirect_lights)
+            for light in indirect:
+                state = lights_states[light.input_no]
                 if state != self.states[light.id]:
                     logger.debug(f'Light {light.id} changed from {self.states[light.id]} to {state}')
                     self.mqtt_client.publish(
@@ -203,4 +206,4 @@ class HassMqttLighstManager(LightsManager):
                     )
                     self.states[light.id] = state
 
-            time.sleep(0.3)
+            time.sleep(0.1)

@@ -30,3 +30,17 @@ def readAll(bus, stack):
         if val & pinMask[i] == 0:
             ret += 1 << i
     return ret
+
+
+def read_all(bus, stack) -> list:
+    if stack < 0 or stack > 7:
+        raise ValueError('Invalid stack level')
+    stack = 0x07 ^ stack
+    hw_add = DEVICE_ADDRESS + stack
+    val = bus.read_word_data(hw_add, INPUTS16_INPORT_REG_ADD)
+
+    ret = [] 
+    for i in range(16):
+        ret.append(val & pinMask[i] == 0)
+    return ret
+

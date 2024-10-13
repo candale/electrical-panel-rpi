@@ -1,7 +1,7 @@
 import time
 
 from .relay import SM16relind
-from .inputs import readCh, readAll
+from .inputs import read_all, readCh, readAll
 from .i2c import i2c_bus
 
 
@@ -71,12 +71,12 @@ def read_input(number):
     return state
 
 
-def read_all_inputs():
+def read_all_inputs() -> list:
     """
     This assumes that we have only two boards with inputs, on level 1 and 3
     """
     with i2c_bus() as bus:
-        first_stack = readAll(bus, 1)
-        second_stack = readAll(bus, 3)
+        first_stack = read_all(bus, 1)
+        second_stack = read_all(bus, 3)
 
     return first_stack + second_stack

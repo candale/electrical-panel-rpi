@@ -1,7 +1,10 @@
 import time
 from dataclasses import dataclass
 
-from in_out.core import write_relay, read_input, toggle_relay, read_relay
+from in_out.core import (
+    write_relay, read_input, toggle_relay, read_relay, read_all_inputs
+)
+from in_out.inputs import readAll
 
 
 @dataclass
@@ -33,8 +36,21 @@ def get_light_state(light: Light):
         current_state = read_input(light.input_no)
     elif light.indirect is False:
         current_state = read_relay(light.relay_no)
-
+ 
     return current_state
+
+
+def get_many_lights_state(lights: list[Light]):
+    states = {}
+    all_inputs = read_all_inputs()
+    for light in lights:
+        if light.indirect and light.input_no is None:
+            raise ValueError('Cannot know if an indirect light is ON if no state pin')
+
+        states[light.input_no] = all_inputs[light.input_no]
+
+    return states
+
 
 
 def toggle_light(light: Light):
