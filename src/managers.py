@@ -4,7 +4,7 @@ from loguru import logger
 from lights import (
     Light, get_light_state, toggle_light, turn_on, turn_off, get_many_lights_state
 )
-
+import paho.mqtt.client as mqtt
 
 class LightsManager:
 
@@ -53,7 +53,7 @@ class HassMqttLighstManager(LightsManager):
     # to use last will as offline
     AVAILABILITY_TOPIC = f'{MQTT_PREFIX}/_all/avail'
 
-    def __init__(self, lights, mqtt_client):
+    def __init__(self, lights, mqtt_client: mqtt.Client):
         """
         The mqtt client is a configured but not started client, i.e. loop_start
         was not called; .connect was called.
@@ -97,7 +97,8 @@ class HassMqttLighstManager(LightsManager):
         if state is not None:
             self.mqtt_client.publish(
                 self.make_state_topic(light_id),
-                self.LIGHT_ON if state else self.LIGHT_OFF
+                self.LIGHT_ON if state else self.LIGHT_OFF,
+                retain=True
             )
 
     def _make_device_description(self):
@@ -132,7 +133,8 @@ class HassMqttLighstManager(LightsManager):
 
         self.mqtt_client.publish(
             self.AVAILABILITY_TOPIC,
-            payload=self.LIGHTS_AVAILABLE
+            payload=self.LIGHTS_AVAILABLE,
+            retain=True
         )
 
     def on_disconnect(self, client, userdata, rc):
@@ -165,23 +167,26 @@ class HassMqttLighstManager(LightsManager):
 
             self.mqtt_client.publish(
                 f'homeassistant/light/panel/{light.id}/config',
-                payload=json.dumps(payload)
+                payload=json.dumps(payload),
+                retain=True
             )
             if light.input_no is not None:
                 state = get_light_state(light)
                 self.states[light.id] = state
                 self.mqtt_client.publish(
                     self.make_state_topic(light.id),
-                    self.LIGHT_ON if state else self.LIGHT_OFF
+                    self.LIGHT_ON if state else self.LIGHT_OFF,
+                    retain=True
                 )
                 logger.debug(f"Published light's {light.id} state as {state}" )
 
             self.mqtt_client.subscribe(cmd_topic)
-            logger.debug(f'Published light {light.id}_light. Subscribed to {cmd_topic}')
 
+            logger.debug(f'Published light {light.id}_light. Subscribed to {cmd_topic}')
         self.mqtt_client.publish(
             self.AVAILABILITY_TOPIC,
-            payload=self.LIGHTS_AVAILABLE
+            payload=self.LIGHTS_AVAILABLE,
+            retain=True
         )
 
     def observe_forever(self):
@@ -202,7 +207,8 @@ class HassMqttLighstManager(LightsManager):
                     logger.debug(f'Light {light.id} changed from {self.states[light.id]} to {state}')
                     self.mqtt_client.publish(
                         self.make_state_topic(light.id),
-                        self.LIGHT_ON if state else self.LIGHT_OFF
+                        self.LIGHT_ON if state else self.LIGHT_OFF,
+                        retain=True
                     )
                     self.states[light.id] = state
 
