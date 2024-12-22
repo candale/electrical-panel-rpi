@@ -29,7 +29,7 @@ class Light:
 def rock_indirect(light: Light, lazy=False):
     """Rock the relay to set the state for the latching relay"""
     write_relay(light.relay_no, True, lazy=lazy)
-    time.sleep(0.25)
+    time.sleep(0.15)
     write_relay(light.relay_no, False, lazy=lazy)
 
 

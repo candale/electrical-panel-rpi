@@ -78,11 +78,16 @@ def install_safeguard_for_relays(relays):
                 if state is True:
                     if number in on_times:
                         if time.time() * 1000 - on_times[number]["start"] > 1200:
+                            logger.warning(f"SAFEGUARD: turning off {number}")
                             write_relay_direct(number, False)
                     else:
                         on_times[number] = {"start": time.time() * 1000}
                 elif number in on_times:
                     del on_times[number]
+            time.sleep(0.5)
+
+    thread = Thread(target=watch)
+    thread.start()
 
 
 def get_stack(number):
