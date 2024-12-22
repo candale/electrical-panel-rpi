@@ -8,7 +8,6 @@ from in_out.core import (
     read_relay,
     read_all_inputs,
 )
-from in_out.inputs import readAll
 
 
 @dataclass

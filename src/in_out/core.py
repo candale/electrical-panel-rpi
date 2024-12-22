@@ -12,7 +12,7 @@ class _LazyRelayStateManager:
         self.write_every_ms = write_every_ms
 
         self._relay_states: list[bool] = []
-        self._last_written_states = list[bool] = list
+        self._last_written_states: list[bool] = list
         self._states_lock = Lock()
         self._initialized = False
 
