@@ -31,6 +31,7 @@ class _LazyRelayStateManager:
             if self._initialized is False:
                 self._initialize()
 
+            logger.debug(f"Lazy setting {relay_no} to {state}")
             self._relay_states[relay_no] = state
 
     def get(self, relay_no):
