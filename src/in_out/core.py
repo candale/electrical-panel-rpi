@@ -152,7 +152,7 @@ def read_all_relays() -> list[bool]:
     """
     This assumes that we have only two boards with relays, on level 0 and 2
     """
-    with i2c_bus as bus:
+    with i2c_bus() as bus:
         first_stack = SM16relind(bus, 0)
         second_stack = SM16relind(bus, 2)
 
@@ -165,7 +165,7 @@ def write_all_relays(states: list[bool]):
     if len(states) != 32:
         raise ValueError("This works only with two relay stacks on level 0 and 2")
 
-    with i2c_bus as bus:
+    with i2c_bus() as bus:
         first_stack = SM16relind(bus, 0)
         second_stack = SM16relind(bus, 2)
 
