@@ -1,5 +1,6 @@
 import time
 from threading import Lock, Thread
+from copy import copy
 
 from loguru import logger
 
@@ -22,7 +23,7 @@ class _LazyRelayStateManager:
 
     def _initialize(self):
         self._relay_states = read_all_relays()
-        self._last_written_states = self._relay_states
+        self._last_written_states = copy(self._relay_states)
         self._writer_thread.start()
         self._initialized = True
 
@@ -43,7 +44,7 @@ class _LazyRelayStateManager:
             do_write = False
             with self._states_lock:
                 if self._relay_states != self._last_written_states:
-                    self._last_written_states = self._relay_states
+                    self._last_written_states = copy(self._relay_states)
                     do_write = True
 
             if do_write:
@@ -81,16 +82,16 @@ def write_relay(number, state, lazy=False):
     We if not lazy, we return the state of the relay, otherwise None becasue we
     don't yet know if the state got written
     """
-    state = None
+    final_state = None
     if lazy:
         lazy_relay_state_manager.set(number, state)
     else:
         relay_stack, relay = get_stack_and_relay(number)
         relay_stack.set(relay, state)
 
-        state = relay_stack.get(relay) == 1
+        final_state = relay_stack.get(relay) == 1
 
-    return state
+    return final_state
 
 
 def read_relay(number, lazy=False):
