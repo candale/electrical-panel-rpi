@@ -81,9 +81,17 @@ class SM16relind:
         all_relays = self.get_all()
         states = []
         for relay_no in range(0, _RELAY_COUNT):
-            states.append(bool((1 << (relay_no - 1)) & all_relays))
+            states.append(bool((1 << relay_no) & all_relays))
 
         return states
+
+    def set_all_from_list(self, states):
+        value = 0
+        for relay_no in range(0, _RELAY_COUNT):
+            if states[relay_no]:
+                value = value | (1 << relay_no)
+
+        self.set_all(value)
 
 
 def relayToIO(relay):
