@@ -14,11 +14,12 @@ def get_stack_and_relay(number):
     """
     This assumes that the relay boards are on even levels in the stack
     """
-    stack = (number // 16 ) * 2
+    stack = (number // 16) * 2
     with i2c_bus() as bus:
         relay_stack = SM16relind(bus, stack)
     relay = (number if number < 16 else number - 16) + 1
     return relay_stack, relay
+
 
 def write_relay(number, state):
     relay_stack, relay = get_stack_and_relay(number)
@@ -59,7 +60,7 @@ def get_stack_and_input(number):
     """
     This assumes that the relay boards are on odd levels in the stack
     """
-    stack = (number // 16 ) * 2 + 1
+    stack = (number // 16) * 2 + 1
     input_ch = (number if number < 16 else number - 16) + 1
     return stack, input_ch
 
@@ -71,7 +72,7 @@ def read_input(number):
     return state
 
 
-def read_all_inputs() -> list:
+def read_all_inputs() -> list[bool]:
     """
     This assumes that we have only two boards with inputs, on level 1 and 3
     """
@@ -80,3 +81,28 @@ def read_all_inputs() -> list:
         second_stack = read_all(bus, 3)
 
     return first_stack + second_stack
+
+
+def read_all_relays() -> list[bool]:
+    """
+    This assumes that we have only two boards with relays, on level 0 and 2
+    """
+    with i2c_bus as bus:
+        first_stack = SM16relind(bus, 0)
+        second_stack = SM16relind(bus, 2)
+
+        states = first_stack.read_all_relays() + second_stack.read_all_relays()
+
+    return states
+
+
+def write_all_relays(states: list[bool]):
+    if len(states) != 32:
+        raise ValueError("This works only with two relay stacks on level 0 and 2")
+
+    with i2c_bus as bus:
+        first_stack = SM16relind(bus, 0)
+        second_stack = SM16relind(bus, 2)
+
+        first_stack.set_all_from_list(states[:16])
+        second_stack.set_all_from_list(states[16:])
