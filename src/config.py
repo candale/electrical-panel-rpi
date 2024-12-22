@@ -8,18 +8,18 @@ configuration = {
         {
             "id": "pantry",
             "verbose_name": "Pantry Light",
-            "relay_no":  8,
+            "relay_no": 8,
             # panel analog: 18
-            "input_no": 5,
-            "indirect": True
+            "input_no": 20,
+            "indirect": True,
         },
         {
             "id": "kitchen_led",
             "verbose_name": "Litchen Led",
-            "relay_no":  9,
+            "relay_no": 9,
             # panel analog: 17
-            "input_no": 3,
-            "indirect": True
+            "input_no": 23,
+            "indirect": True,
         },
         {
             "id": "kitchen",
@@ -27,15 +27,15 @@ configuration = {
             "relay_no": 10,
             # panel analog: 16
             "input_no": 4,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "stairs",
             "verbose_name": "Stairs Light",
             "relay_no": 11,
             # panel analog: 14
-            "input_no": 23,
-            "indirect": True
+            "input_no": 5,
+            "indirect": True,
         },
         {
             "id": "living_square",
@@ -43,7 +43,7 @@ configuration = {
             "relay_no": 12,
             # panel analog: 13
             "input_no": 22,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "living_center",
@@ -51,7 +51,7 @@ configuration = {
             "relay_no": 13,
             # panel analog: 12
             "input_no": 21,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "terrace_exit",
@@ -59,7 +59,7 @@ configuration = {
             "relay_no": 14,
             # panel analog: 11
             "input_no": 20,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "exterior_yard",
@@ -67,7 +67,7 @@ configuration = {
             "relay_no": 15,
             # panel analog: 21
             "input_no": 19,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "exterior_road",
@@ -75,7 +75,7 @@ configuration = {
             "relay_no": 24,
             # panel analog: 20
             "input_no": 18,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "hallway_entrance",
@@ -83,7 +83,7 @@ configuration = {
             "relay_no": 25,
             # panel analog: 19
             "input_no": 17,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "dinning",
@@ -91,7 +91,7 @@ configuration = {
             "relay_no": 26,
             # panel analog: 10
             "input_no": 16,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "dinning_way",
@@ -99,7 +99,7 @@ configuration = {
             "relay_no": 27,
             # panel analog: 9
             "input_no": 24,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "main_way",
@@ -107,7 +107,7 @@ configuration = {
             "relay_no": 28,
             # panel analog: 8
             "input_no": 25,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "bedroom_way",
@@ -115,7 +115,7 @@ configuration = {
             "relay_no": 29,
             # panel analog: 7
             "input_no": 26,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "dressing",
@@ -123,7 +123,7 @@ configuration = {
             "relay_no": 30,
             # panel analog: 5
             "input_no": 27,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "bathroom_shower",
@@ -131,7 +131,7 @@ configuration = {
             "relay_no": 31,
             # panel analog: 4
             "input_no": 28,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "tub_shower",
@@ -139,7 +139,7 @@ configuration = {
             "relay_no": 16,
             # panel analog: 3
             "input_no": 29,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "bedroom_small",
@@ -147,7 +147,7 @@ configuration = {
             "relay_no": 17,
             # panel analog: 2
             "input_no": 30,
-            "indirect": True
+            "indirect": True,
         },
         {
             "id": "bedroom_master",
@@ -155,8 +155,8 @@ configuration = {
             "relay_no": 18,
             # panel analog: 1
             "input_no": 31,
-            "indirect": True
-        }
+            "indirect": True,
+        },
     ]
 }
 
@@ -167,6 +167,6 @@ def load_lights() -> list[Light]:
         try:
             lights.append(Light(**light_config))
         except TypeError as e:
-            raise TypeError(f'Bad light config at index {index}') from e
+            raise TypeError(f"Bad light config at index {index}") from e
 
     return lights
