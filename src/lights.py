@@ -1,5 +1,8 @@
 import time
 from dataclasses import dataclass
+from threading import Thread
+
+from loguru import logger
 
 from in_out.core import (
     write_relay,
@@ -23,11 +26,18 @@ class Light:
     indirect: bool
 
 
-def rock_indirect(light: Light):
+def rock_indirect(light: Light, lazy=False):
     """Rock the relay to set the state for the latching relay"""
-    write_relay(light.relay_no, True, lazy=True)
+    write_relay(light.relay_no, True, lazy=lazy)
     time.sleep(0.2)
-    write_relay(light.relay_no, False, lazy=True)
+    write_relay(light.relay_no, False, lazy=lazy)
+
+
+def rock_indirect_lazy(light: Light):
+    logger.debug(f"Starging new thread for light {light.id}")
+
+    thread = Thread(target=rock_indirect, args=(light,), kwargs={"lazy": True})
+    thread.start()
 
 
 def get_light_state(light: Light):
@@ -65,7 +75,7 @@ def toggle_light(light: Light):
     """
     new_state = None
     if light.indirect:
-        rock_indirect(light)
+        rock_indirect_lazy(light)
     else:
         new_state = toggle_relay(light.relay_no)
 
@@ -84,7 +94,7 @@ def turn_on(light: Light):
     new_state = None
     if current_state is False:
         if light.indirect:
-            rock_indirect(light)
+            rock_indirect_lazy(light)
         else:
             new_state = write_relay(light.relay_no, True)
     else:
@@ -106,7 +116,7 @@ def turn_off(light: Light):
     new_state = None
     if current_state is True:
         if light.indirect:
-            rock_indirect(light)
+            rock_indirect_lazy(light)
         else:
             new_state = write_relay(light.relay_no, False)
     else:
