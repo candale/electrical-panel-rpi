@@ -37,15 +37,17 @@ class _LazyRelayStateManager:
         return self._relay_states[relay_no]
 
     def _do_writes(self):
+        logger.debug("Writer thread started ...")
         while True:
             do_write = False
             with self._states_lock:
                 if self._relay_states != self._last_written_states:
                     self._last_written_states = self._relay_states
+                    do_write = True
 
             if do_write:
                 logger.debug("Writing lazy states")
-                write_all_relays(self._last_written_statei)
+                write_all_relays(self._last_written_states)
 
             time.sleep(self.write_every_ms / 1000)
 
