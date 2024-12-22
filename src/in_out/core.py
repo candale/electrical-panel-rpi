@@ -44,7 +44,7 @@ class _LazyRelayStateManager:
                     self._last_written_states = self._relay_states
 
             if do_write:
-                logger.debug('Writing lazy states')
+                logger.debug("Writing lazy states")
                 write_all_relays(self._last_written_statei)
 
             time.sleep(self.write_every_ms / 1000)
@@ -168,7 +168,7 @@ def write_all_relays(states: list[bool]):
     if len(states) != 32:
         raise ValueError("This works only with two relay stacks on level 0 and 2")
 
-    with i2c_bus( as bus:
+    with i2c_bus() as bus:
         first_stack = SM16relind(bus, 0)
         second_stack = SM16relind(bus, 2)
 
