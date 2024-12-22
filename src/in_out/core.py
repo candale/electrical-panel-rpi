@@ -11,13 +11,15 @@ from .i2c import i2c_bus
 
 class _LazyRelayStateManager:
 
-    def __init__(self, write_every_ms=180):
+    def __init__(self, write_every_ms=100):
         self.write_every_ms = write_every_ms
+        self._force_write = False
 
         self._relay_states: list[bool] = []
         self._last_written_states: list[bool] = list
         self._states_lock = Lock()
         self._initialized = False
+        self._last_write_ms = 0
 
         self._writer_thread = Thread(target=self._do_writes)
 
@@ -27,13 +29,14 @@ class _LazyRelayStateManager:
         self._writer_thread.start()
         self._initialized = True
 
-    def set(self, relay_no, state):
+    def set(self, relay_no, state, lazy=False):
         with self._states_lock:
             if self._initialized is False:
                 self._initialize()
 
             logger.debug(f"Lazy setting {relay_no} to {state}")
             self._relay_states[relay_no] = state
+            self._force_write = not lazy
 
     def get(self, relay_no):
         return self._relay_states[relay_no]
@@ -42,16 +45,24 @@ class _LazyRelayStateManager:
         logger.debug("Writer thread started ...")
         while True:
             do_write = False
-            with self._states_lock:
-                if self._relay_states != self._last_written_states:
-                    self._last_written_states = copy(self._relay_states)
-                    do_write = True
+            now_ms = time.time() * 1000
+            should_write = (
+                self._force_write or now_ms - self._last_write_ms > self.write_every_ms
+            )
+
+            if should_write:
+                with self._states_lock:
+                    # reset force write, if ever set
+                    self._force_write = False
+                    if self._relay_states != self._last_written_states:
+                        self._last_written_states = copy(self._relay_states)
+                        do_write = True
 
             if do_write:
                 logger.debug("Writing lazy states")
                 write_all_relays(self._last_written_states)
 
-            time.sleep(self.write_every_ms / 1000)
+            time.sleep(0.01)
 
 
 lazy_relay_state_manager = _LazyRelayStateManager()
@@ -74,6 +85,10 @@ def get_stack_and_relay(number):
 
 
 def write_relay(number, state, lazy=False):
+    lazy_relay_state_manager.set(number, state, lazy=lazy)
+
+
+def write_relay_direct(number, state, lazy=False):
     """
     The `number` arg starts from 0
     If `lazy` set to true, the change accumulates over a set period of time and
