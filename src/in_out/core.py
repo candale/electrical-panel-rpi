@@ -1,8 +1,53 @@
 import time
+from threading import Lock, Thread
 
 from .relay import SM16relind
 from .inputs import read_all, readCh, readAll
 from .i2c import i2c_bus
+
+
+class _LazyRelayStateManager:
+
+    def __init__(self, write_every_ms=100):
+        self.write_every_ms = write_every_ms
+
+        self._relay_states: list[bool] = []
+        self._last_written_states = list[bool] = list
+        self._states_lock = Lock()
+        self._initialized = False
+
+        self._writer_thread = Thread(target=self._do_writes)
+
+    def _initialize(self):
+        self._relay_states = read_all_relays()
+        self._last_written_states = self._relay_states
+        self._writer_thread.start()
+        self._initialized = True
+
+    def set(self, relay_no, state):
+        with self._states_lock:
+            if self._initialized is False:
+                self._initialize()
+
+            self._relay_states[relay_no] = state
+
+    def get(self, relay_no):
+        return self._relay_states[relay_no]
+
+    def _do_writes(self):
+        while True:
+            do_write = False
+            with self._states_lock:
+                if self._relay_states != self._last_written_states:
+                    self._last_written_states = self._relay_states
+
+            if do_write:
+                write_all_relays(self._last_written_statei)
+
+            time.sleep(self.write_every_ms / 1000)
+
+
+lazy_relay_state_manager = _LazyRelayStateManager()
 
 
 def get_stack(number):
@@ -21,16 +66,36 @@ def get_stack_and_relay(number):
     return relay_stack, relay
 
 
-def write_relay(number, state):
-    relay_stack, relay = get_stack_and_relay(number)
-    relay_stack.set(relay, state)
+def write_relay(number, state, lazy=False):
+    """
+    The `number` arg starts from 0
+    If `lazy` set to true, the change accumulates over a set period of time and
+    it is written at the end of the write interval
 
-    return relay_stack.get(relay) == 1
+    We if not lazy, we return the state of the relay, otherwise None becasue we
+    don't yet know if the state got written
+    """
+    state = None
+    if lazy:
+        lazy_relay_state_manager.set(number, state)
+    else:
+        relay_stack, relay = get_stack_and_relay(number)
+        relay_stack.set(relay, state)
+
+        state = relay_stack.get(relay) == 1
+
+    return state
 
 
-def read_relay(number):
-    relay_stack, relay = get_stack_and_relay(number)
-    return relay_stack.get(relay) == 1
+def read_relay(number, lazy=False):
+    state = None
+    if lazy:
+        state = lazy_relay_state_manager.get(number)
+    else:
+        relay_stack, relay = get_stack_and_relay(number)
+        state = relay_stack.get(relay) == 1
+
+    return state
 
 
 def rock_relay(number):
@@ -91,7 +156,7 @@ def read_all_relays() -> list[bool]:
         first_stack = SM16relind(bus, 0)
         second_stack = SM16relind(bus, 2)
 
-        states = first_stack.read_all_relays() + second_stack.read_all_relays()
+        states = first_stack.get_all_as_list() + second_stack.get_all_as_list()
 
     return states
 

@@ -2,7 +2,11 @@ import time
 from dataclasses import dataclass
 
 from in_out.core import (
-    write_relay, read_input, toggle_relay, read_relay, read_all_inputs
+    write_relay,
+    read_input,
+    toggle_relay,
+    read_relay,
+    read_all_inputs,
 )
 from in_out.inputs import readAll
 
@@ -22,21 +26,21 @@ class Light:
 
 def rock_indirect(light: Light):
     """Rock the relay to set the state for the latching relay"""
-    write_relay(light.relay_no, True)
+    write_relay(light.relay_no, True, lazy=True)
     time.sleep(0.2)
-    write_relay(light.relay_no, False)
+    write_relay(light.relay_no, False, lazy=True)
 
 
 def get_light_state(light: Light):
     if light.indirect and light.input_no is None:
-        raise ValueError('Cannot know if an indirect light is ON if no state pin')
+        raise ValueError("Cannot know if an indirect light is ON if no state pin")
 
     current_state = None
     if light.input_no is not None:
         current_state = read_input(light.input_no)
     elif light.indirect is False:
         current_state = read_relay(light.relay_no)
- 
+
     return current_state
 
 
@@ -45,12 +49,11 @@ def get_many_lights_state(lights: list[Light]):
     all_inputs = read_all_inputs()
     for light in lights:
         if light.indirect and light.input_no is None:
-            raise ValueError('Cannot know if an indirect light is ON if no state pin')
+            raise ValueError("Cannot know if an indirect light is ON if no state pin")
 
         states[light.input_no] = all_inputs[light.input_no]
 
     return states
-
 
 
 def toggle_light(light: Light):
@@ -75,7 +78,7 @@ def toggle_light(light: Light):
 
 def turn_on(light: Light):
     if light.indirect and light.input_no is None:
-        raise ValueError('Cannot know if an indirect light is ON if no state pin')
+        raise ValueError("Cannot know if an indirect light is ON if no state pin")
 
     current_state = get_light_state(light)
 
@@ -97,7 +100,7 @@ def turn_on(light: Light):
 
 def turn_off(light: Light):
     if light.indirect and light.input_no is None:
-        raise ValueError('Cannot know if an indirect light is ON if no state pin')
+        raise ValueError("Cannot know if an indirect light is ON if no state pin")
 
     current_state = get_light_state(light)
 

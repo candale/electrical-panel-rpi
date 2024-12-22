@@ -7,9 +7,9 @@ from config import load_lights
 from in_out.i2c import configure
 
 
-USERNAME = os.environ['MQTT_USERNAME']
-PASSWORD = os.environ['MQTT_PASSWORD']
-HOSTNAME = os.environ['MQTT_HOSTNAME']
+USERNAME = os.environ["MQTT_USERNAME"]
+PASSWORD = os.environ["MQTT_PASSWORD"]
+HOSTNAME = os.environ["MQTT_HOSTNAME"]
 
 client = mqtt.Client()
 client.username_pw_set(USERNAME, PASSWORD)
