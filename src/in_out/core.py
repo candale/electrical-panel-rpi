@@ -11,7 +11,7 @@ from .i2c import i2c_bus
 
 class _LazyRelayStateManager:
 
-    def __init__(self, write_every_ms=100):
+    def __init__(self, write_every_ms=180):
         self.write_every_ms = write_every_ms
 
         self._relay_states: list[bool] = []
