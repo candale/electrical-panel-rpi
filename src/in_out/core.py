@@ -61,11 +61,28 @@ class _LazyRelayStateManager:
             if do_write:
                 logger.debug("Writing lazy states")
                 write_all_relays(self._last_written_states)
+                self._last_write_ms = time.time() * 1000
 
             time.sleep(0.01)
 
 
 lazy_relay_state_manager = _LazyRelayStateManager()
+
+
+def install_safeguard_for_relays(relays):
+    def watch():
+        on_times = {}
+        while True:
+            states = read_all_relays()
+            for number, state in enumerate(states):
+                if state is True:
+                    if number in on_times:
+                        if time.time() * 1000 - on_times[number]["start"] > 1200:
+                            write_relay_direct(number, False)
+                    else:
+                        on_times[number] = {"start": time.time() * 1000}
+                elif number in on_times:
+                    del on_times[number]
 
 
 def get_stack(number):
@@ -88,23 +105,14 @@ def write_relay(number, state, lazy=False):
     lazy_relay_state_manager.set(number, state, lazy=lazy)
 
 
-def write_relay_direct(number, state, lazy=False):
+def write_relay_direct(number, state):
     """
     The `number` arg starts from 0
-    If `lazy` set to true, the change accumulates over a set period of time and
-    it is written at the end of the write interval
-
-    We if not lazy, we return the state of the relay, otherwise None becasue we
-    don't yet know if the state got written
     """
-    final_state = None
-    if lazy:
-        lazy_relay_state_manager.set(number, state)
-    else:
-        relay_stack, relay = get_stack_and_relay(number)
-        relay_stack.set(relay, state)
+    relay_stack, relay = get_stack_and_relay(number)
+    relay_stack.set(relay, state)
 
-        final_state = relay_stack.get(relay) == 1
+    final_state = relay_stack.get(relay) == 1
 
     return final_state
 
