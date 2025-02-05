@@ -144,7 +144,7 @@ configuration = {
         {
             "id": "bedroom_small",
             "verbose_name": "Bedroom Small Light",
-            "relay_no": 17,
+            "relay_no": 18,
             # panel analog: 2
             "input_no": 30,
             "indirect": True,
@@ -152,7 +152,7 @@ configuration = {
         {
             "id": "bedroom_master",
             "verbose_name": "Bedroom Master Light",
-            "relay_no": 18,
+            "relay_no": 17,
             # panel analog: 1
             "input_no": 31,
             "indirect": True,
